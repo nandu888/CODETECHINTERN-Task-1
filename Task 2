@@ -1,0 +1,125 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class StudentGrade {
+
+    static class SubjectGrade {
+        String subjectName;
+        double grade; // Numeric grade
+        double gpa;   // GPA for the subject
+
+        public SubjectGrade(String subjectName, double grade) {
+            this.subjectName = subjectName;
+            this.grade = grade;
+            this.gpa = calculateGPA(grade);
+        }
+
+        @Override
+        public String toString() {
+            return subjectName + ": Grade = " + grade + ", GPA = " + gpa;
+        }
+
+        private static double calculateGPA(double grade) {
+            if (grade >= 90) {
+                return 4.0;
+            } else if (grade >= 80) {
+                return 3.0;
+            } else if (grade >= 70) {
+                return 2.0;
+            } else if (grade >= 60) {
+                return 1.0;
+            } else {
+                return 0.0;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        ArrayList<SubjectGrade> gradeList = new ArrayList<>();
+
+        System.out.println("Student Grade Calculator with CGPA");
+        System.out.println("==================================");
+
+        boolean continueInput = true;
+
+        while (continueInput) {
+            System.out.println("Enter subject name:");
+            String subject = scanner.nextLine();
+
+            System.out.println("Enter grade for " + subject + " (0 to 100):");
+            double grade = getValidGrade(scanner);
+
+            gradeList.add(new SubjectGrade(subject, grade));
+
+            System.out.println("Do you want to enter another grade? (yes/no):");
+            String response = scanner.nextLine().trim().toLowerCase();
+            continueInput = response.equals("yes");
+        }
+
+        if (!gradeList.isEmpty()) {
+            System.out.println("\n--- Grade Summary ---");
+            for (SubjectGrade sg : gradeList) {
+                System.out.println(sg);
+            }
+
+            double averageGrade = calculateAverage(gradeList);
+            char letterGrade = determineLetterGrade(averageGrade);
+            double cgpa = calculateCGPA(gradeList);
+
+            System.out.printf("\nAverage Grade: %.2f\n", averageGrade);
+            System.out.println("Overall Letter Grade: " + letterGrade);
+            System.out.printf("CGPA: %.2f\n", cgpa);
+        } else {
+            System.out.println("No grades entered.");
+        }
+
+        System.out.println("\nThank you for using the Student Grade Calculator!");
+        scanner.close();
+    }
+
+    private static double getValidGrade(Scanner scanner) {
+        while (true) {
+            try {
+                double grade = Double.parseDouble(scanner.nextLine());
+                if (grade >= 0 && grade <= 100) {
+                    return grade;
+                } else {
+                    System.out.println("Grade must be between 0 and 100. Try again:");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number between 0 and 100:");
+            }
+        }
+    }
+
+    private static double calculateAverage(ArrayList<SubjectGrade> gradeList) {
+        double total = 0;
+        for (SubjectGrade sg : gradeList) {
+            total += sg.grade;
+        }
+        return total / gradeList.size();
+    }
+
+    private static char determineLetterGrade(double average) {
+        if (average >= 90) {
+            return 'A';
+        } else if (average >= 80) {
+            return 'B';
+        } else if (average >= 70) {
+            return 'C';
+        } else if (average >= 60) {
+            return 'D';
+        } else {
+            return 'F';
+        }
+    }
+
+    private static double calculateCGPA(ArrayList<SubjectGrade> gradeList) {
+        double totalGPA = 0;
+        for (SubjectGrade sg : gradeList) {
+            totalGPA += sg.gpa;
+        }
+        return totalGPA / gradeList.size();
+    }
+}
